@@ -4,7 +4,6 @@ const cors = require("cors");
 const db = require("./models");
 const { Folder } = require("./models");
 
-
 // Routes
 const authRoutes = require("./routes/auth");
 const uploadRoute = require("./routes/upload");
@@ -13,8 +12,13 @@ const fileRoutes = require("./routes/file");
 
 const app = express();
 
-// ✅ Middleware
-app.use(cors());
+// ✅ CORS Configuration - Only allow requests from your frontend (e.g., localhost:3007)
+const corsOptions = {
+  origin: 'http://localhost:3007',  // Replace with your frontend URL when in production
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+};
+
+app.use(cors(corsOptions));  // Apply CORS with the configured options
 app.use(express.json());
 
 // ✅ Root Test Route
@@ -23,11 +27,12 @@ app.get("/", (req, res) => {
 });
 
 // ✅ Route Mounting
-app.use("/api/auth", authRoutes);
-app.use("/api/upload", uploadRoute);
-app.use("/api/folders", folderRoutes);
-app.use("/api/files", fileRoutes);
+app.use("/api/auth", authRoutes);  // Authentication routes
+app.use("/api/upload", uploadRoute);  // File upload routes
+app.use("/api/folders", folderRoutes);  // Folder-related routes
+app.use("/api/files", fileRoutes);  // File-related routes
 
+// Test endpoint for fetching folders (for debugging purposes)
 app.get("/test", async (req, res) => {
   try {
     const folders = await Folder.findAll();
@@ -45,6 +50,7 @@ db.sequelize
   .sync()
   .then(() => {
     console.log("✅ Database synced");
+    // If you're testing locally, you can print the local URL
     console.log(`🚀 Server running on: http://localhost:${PORT}`);
     app.listen(PORT, () => {
       console.log(`🌍 API is live at: http://localhost:${PORT}`);
