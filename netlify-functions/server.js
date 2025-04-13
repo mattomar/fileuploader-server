@@ -1,11 +1,11 @@
 const express = require("express");
 const cors = require("cors");
-const db = require("./models");
-const { Folder } = require("./models");
-const authRoutes = require("./routes/auth");
-const uploadRoute = require("./routes/upload");
-const folderRoutes = require("./routes/folder");
-const fileRoutes = require("./routes/file");
+const db = require("../models");
+const { Folder } = require("../models");
+const authRoutes = require("../routes/auth");
+const uploadRoute = require("../routes/upload");
+const folderRoutes = require("../routes/folder");
+const fileRoutes = require("../routes/file");
 const serverless = require("serverless-http");
 
 const app = express();
