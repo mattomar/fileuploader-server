@@ -13,7 +13,8 @@ const app = express();
 
 // ✅ CORS Configuration
 const allowedOrigins = [
-  'http://localhost:3007',  // Local development frontend URL
+  'http://localhost:3007', 
+'https://fileuploader-psi.vercel.app',
   'https://fileuploader-server-production.up.railway.app', // Production frontend URL
   // Add any other origins where you want to allow requests
 ];
