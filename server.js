@@ -13,22 +13,22 @@ const app = express();
 
 // ✅ CORS Configuration
 const allowedOrigins = [
-  'http://localhost:3007',
-  'https://fileuploader-server-production.up.railway.app',
-  // Add your deployed frontend URL here (e.g., Vercel/Netlify domain)
+  'http://localhost:3007',  // Local development frontend URL
+  'https://fileuploader-server-production.up.railway.app', // Production frontend URL
+  // Add any other origins where you want to allow requests
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
+      callback(null, true); // Allows the request if it matches the allowed origins
     } else {
-      callback(new Error("Not allowed by CORS: " + origin));
+      callback(new Error("Not allowed by CORS: " + origin)); // Rejects the request otherwise
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true,
-  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, // Allow cookies/auth headers
+  allowedHeaders: ["Content-Type", "Authorization"], // Allow authorization header (JWT token)
 };
 
 app.use(cors(corsOptions));
@@ -39,6 +39,7 @@ app.get("/", (req, res) => {
   res.send("✅ Server is running!");
 });
 
+// Test endpoint to get folders from the database
 app.get("/test", async (req, res) => {
   try {
     const folders = await Folder.findAll();
@@ -50,10 +51,10 @@ app.get("/test", async (req, res) => {
 });
 
 // ✅ API Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/upload", uploadRoute);
-app.use("/api/folders", folderRoutes);
-app.use("/api/files", fileRoutes);
+app.use("/api/auth", authRoutes);  // Authentication routes
+app.use("/api/upload", uploadRoute);  // Upload routes
+app.use("/api/folders", folderRoutes);  // Folder management routes
+app.use("/api/files", fileRoutes);  // File management routes
 
 // ✅ Start Server
 const PORT = process.env.PORT || 5011;
