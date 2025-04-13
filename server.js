@@ -12,13 +12,26 @@ const fileRoutes = require("./routes/file");
 
 const app = express();
 
-// ✅ CORS Configuration - Only allow requests from your frontend (e.g., localhost:3007)
+// ✅ CORS Configuration - Allow multiple origins
+const allowedOrigins = [
+  'http://localhost:3007', // Your local frontend
+  'https://fileuploader-server-production.up.railway.app', // Your Railway backend (when called from other places)
+  // Add your frontend's production URL here if deployed elsewhere
+];
+
 const corsOptions = {
-  origin: 'http://localhost:3007',  // Replace with your frontend URL when in production
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS: " + origin));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
 };
 
-app.use(cors(corsOptions));  // Apply CORS with the configured options
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // ✅ Root Test Route
@@ -27,12 +40,12 @@ app.get("/", (req, res) => {
 });
 
 // ✅ Route Mounting
-app.use("/api/auth", authRoutes);  // Authentication routes
-app.use("/api/upload", uploadRoute);  // File upload routes
-app.use("/api/folders", folderRoutes);  // Folder-related routes
-app.use("/api/files", fileRoutes);  // File-related routes
+app.use("/api/auth", authRoutes);
+app.use("/api/upload", uploadRoute);
+app.use("/api/folders", folderRoutes);
+app.use("/api/files", fileRoutes);
 
-// Test endpoint for fetching folders (for debugging purposes)
+// ✅ Debug Test Route
 app.get("/test", async (req, res) => {
   try {
     const folders = await Folder.findAll();
@@ -50,8 +63,6 @@ db.sequelize
   .sync()
   .then(() => {
     console.log("✅ Database synced");
-    // If you're testing locally, you can print the local URL
-    console.log(`🚀 Server running on: http://localhost:${PORT}`);
     app.listen(PORT, () => {
       console.log(`🌍 API is live at: http://localhost:${PORT}`);
     });
